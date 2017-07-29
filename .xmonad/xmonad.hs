@@ -8,12 +8,11 @@
 --
 
 import XMonad
-import XMonad.Config.Xfce
+import Data.Monoid
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
-import Data.Monoid
+import XMonad.Hooks.ICCCMFocus
 import System.Exit
-
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -51,12 +50,12 @@ myModMask       = mod4Mask
 --
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
-myWorkspaces    = ["1:term","2:web","3:code","4:media"] ++ map show [4..9]
+myWorkspaces    = ["1:term","2:web","3:code","4:media","5","6","7","8","9"]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
-myNormalBorderColor  = "#7c7c7c"
-myFocusedBorderColor = "#ffb6b0"
+myNormalBorderColor  = "#dddddd"
+myFocusedBorderColor = "#ff0000"
 
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
@@ -185,20 +184,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
---myLayout = tiled ||| Mirror tiled ||| Full
-  --where
-     -- default tiling algorithm partitions the screen into two panes
-     --tiled   = Tall nmaster delta ratio
-
-     -- The default number of windows in the master pane
-     --nmaster = 1
-
-     -- Default proportion of screen occupied by master pane
-     --ratio   = 1/2
-
-     -- Percent of screen to increment by when resizing panes
-     --delta   = 3/100
-
+myLayout = avoidStruts $ layoutHook defaultConfig
 ------------------------------------------------------------------------
 -- Window rules:
 
@@ -214,12 +200,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
 --
---myManageHook = composeAll
-    --[ className =? "MPlayer"        --> doFloat
-    --, className =? "Gimp"           --> doFloat
-    --, resource  =? "desktop_window" --> doIgnore
-    --, resource  =? "kdesktop"       --> doIgnore ]
-
+myManageHook = manageHook defaultConfig <+> manageDocks
 ------------------------------------------------------------------------
 -- Event handling
 
@@ -229,7 +210,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
---myEventHook = mempty
+myEventHook = mempty
 
 ------------------------------------------------------------------------
 -- Status bars and logging
@@ -237,7 +218,9 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
---myLogHook = return ()
+myLogHook = do
+    takeTopFocus
+    dynamicLogWithPP xmobarPP
 
 ------------------------------------------------------------------------
 -- Startup hook
@@ -247,7 +230,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- per-workspace layout choices.
 --
 -- By default, do nothing.
---myStartupHook = return ()
+myStartupHook = return()
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
@@ -262,7 +245,7 @@ main = xmonad =<< xmobar defaults
 --
 -- No need to modify this.
 --
-defaults = xfceConfig {
+defaults = def {
       -- simple stuff
         terminal           = myTerminal,
         focusFollowsMouse  = myFocusFollowsMouse,
@@ -275,14 +258,14 @@ defaults = xfceConfig {
 
       -- key bindings
         keys               = myKeys,
-        mouseBindings      = myMouseBindings
+        mouseBindings      = myMouseBindings,
 
       -- hooks, layouts
-        --layoutHook         = myLayout,
-        --manageHook         = myManageHook,
-        --handleEventHook    = myEventHook,
-        --logHook            = myLogHook,
-        --startupHook        = myStartupHook
+        layoutHook         = myLayout,
+        manageHook         = myManageHook,
+        handleEventHook    = myEventHook,
+        logHook            = myLogHook,
+        startupHook        = myStartupHook
     }
 
 -- | Finally, a copy of the default bindings in simple textual tabular format.
