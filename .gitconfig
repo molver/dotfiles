@@ -1,0 +1,8 @@
+[alias]
+	st = status .
+	ci = commit -m
+[user]
+	email = zhengqk@yidianling.com
+	name = zhengqk
+[core]
+	editor = vim
