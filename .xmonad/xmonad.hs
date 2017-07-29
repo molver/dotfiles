@@ -9,8 +9,11 @@
 
 import XMonad
 import XMonad.Config.Xfce
+import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.DynamicLog
 import Data.Monoid
 import System.Exit
+
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
@@ -18,7 +21,7 @@ import qualified Data.Map        as M
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
---myTerminal      = "xterm"
+myTerminal      = "xfce4-terminal"
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -37,7 +40,7 @@ myBorderWidth   = 1
 -- ("right alt"), which does not conflict with emacs keybindings. The
 -- "windows key" is usually mod4Mask.
 --
-myModMask       = mod1Mask
+myModMask       = mod4Mask
 
 -- The default number of workspaces (virtual screens) and their names.
 -- By default we use numeric strings, but any string may be used as a
@@ -48,12 +51,12 @@ myModMask       = mod1Mask
 --
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
-myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
+myWorkspaces    = ["1:term","2:web","3:code","4:media"] ++ map show [4..9]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
-myNormalBorderColor  = "#dddddd"
-myFocusedBorderColor = "#ff0000"
+myNormalBorderColor  = "#7c7c7c"
+myFocusedBorderColor = "#ffb6b0"
 
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
@@ -121,7 +124,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also the statusBar function from Hooks.DynamicLog.
     --
-    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
+    , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     -- Quit xmonad
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
@@ -182,19 +185,19 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = tiled ||| Mirror tiled ||| Full
-  where
+--myLayout = tiled ||| Mirror tiled ||| Full
+  --where
      -- default tiling algorithm partitions the screen into two panes
-     tiled   = Tall nmaster delta ratio
+     --tiled   = Tall nmaster delta ratio
 
      -- The default number of windows in the master pane
-     nmaster = 1
+     --nmaster = 1
 
      -- Default proportion of screen occupied by master pane
-     ratio   = 1/2
+     --ratio   = 1/2
 
      -- Percent of screen to increment by when resizing panes
-     delta   = 3/100
+     --delta   = 3/100
 
 ------------------------------------------------------------------------
 -- Window rules:
@@ -211,11 +214,11 @@ myLayout = tiled ||| Mirror tiled ||| Full
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
 --
-myManageHook = composeAll
-    [ className =? "MPlayer"        --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore ]
+--myManageHook = composeAll
+    --[ className =? "MPlayer"        --> doFloat
+    --, className =? "Gimp"           --> doFloat
+    --, resource  =? "desktop_window" --> doIgnore
+    --, resource  =? "kdesktop"       --> doIgnore ]
 
 ------------------------------------------------------------------------
 -- Event handling
@@ -226,7 +229,7 @@ myManageHook = composeAll
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
-myEventHook = mempty
+--myEventHook = mempty
 
 ------------------------------------------------------------------------
 -- Status bars and logging
@@ -234,7 +237,7 @@ myEventHook = mempty
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
-myLogHook = return ()
+--myLogHook = return ()
 
 ------------------------------------------------------------------------
 -- Startup hook
@@ -244,14 +247,14 @@ myLogHook = return ()
 -- per-workspace layout choices.
 --
 -- By default, do nothing.
-myStartupHook = return ()
+--myStartupHook = return ()
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
 
 -- Run xmonad with the settings you specify. No need to modify this.
 --
-main = xmonad defaults
+main = xmonad =<< xmobar defaults
 
 -- A structure containing your configuration settings, overriding
 -- fields in the default config. Any you don't override, will
@@ -272,14 +275,14 @@ defaults = xfceConfig {
 
       -- key bindings
         keys               = myKeys,
-        mouseBindings      = myMouseBindings,
+        mouseBindings      = myMouseBindings
 
       -- hooks, layouts
-        layoutHook         = myLayout,
-        manageHook         = myManageHook,
-        handleEventHook    = myEventHook,
-        logHook            = myLogHook,
-        startupHook        = myStartupHook
+        --layoutHook         = myLayout,
+        --manageHook         = myManageHook,
+        --handleEventHook    = myEventHook,
+        --logHook            = myLogHook,
+        --startupHook        = myStartupHook
     }
 
 -- | Finally, a copy of the default bindings in simple textual tabular format.
