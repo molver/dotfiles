@@ -54,7 +54,7 @@ myWorkspaces    = ["1:term","2:web","3:code","4:media","5","6","7","8","9"]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
-myNormalBorderColor  = "#dddddd"
+myNormalBorderColor  = "#7c7c7c"
 myFocusedBorderColor = "#ff0000"
 
 ------------------------------------------------------------------------
@@ -133,6 +133,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
+    , ((0, 0x1008FF12), spawn "amixer -q set Master toggle")
+    , ((0, 0x1008FF11), spawn "amixer -q set Master 10%-")
+    , ((0, 0x1008FF13), spawn "amixer -q set Master 10%+")
     ]
     ++
 
@@ -200,7 +203,12 @@ myLayout = avoidStruts $ layoutHook defaultConfig
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
 --
-myManageHook = manageHook defaultConfig <+> manageDocks
+myManageHook :: [ManageHook]
+myManageHook = [ className =? "MPlayer"        --> doFloat
+    , className =? "Gimp"           --> doFloat
+    , resource  =? "desktop_window" --> doIgnore
+    , resource  =? "kdesktop"       --> doIgnore ]
+
 ------------------------------------------------------------------------
 -- Event handling
 
@@ -262,7 +270,9 @@ defaults = def {
 
       -- hooks, layouts
         layoutHook         = myLayout,
-        manageHook         = myManageHook,
+        manageHook         = manageHook defaultConfig
+	      <+> composeAll myManageHook
+	      <+> manageDocks,
         handleEventHook    = myEventHook,
         logHook            = myLogHook,
         startupHook        = myStartupHook
