@@ -1,3 +1,3 @@
 # dotfiles
-use arandr generate xrandr shell script
-.xssesion run fcitx & xrandr shell script
+### use arandr generate xrandr shell script
+### edit .xssesion to run fcitx & xrandr shell script
