@@ -36,7 +36,6 @@
 .xfce4-session.verbose-log
 .xfce4-session.verbose-log.last
 .xinitrc
-.xmobarrc
 .xprofile
 .xsession
 .xsession-errors
@@ -57,3 +56,8 @@ Git/
 下载
 音乐
 桌面
+xmonad.errors
+xmonad.hi
+xmonad.o
+xmonad.state
+xmonad-x86_64-linux
