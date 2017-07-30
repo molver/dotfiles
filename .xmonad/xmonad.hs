@@ -71,7 +71,7 @@ myModMask       = mod4Mask
 --
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
-myWorkspaces    = ["1:term","2:web","3:code","4:media","5","6","7","8","9"]
+myWorkspaces    = ["term","web","code","media","5","6","7","8","9"]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
@@ -250,10 +250,12 @@ myManageHook :: [ManageHook]
 myManageHook = [ className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
     , className =? "Viewnior"       --> doFloat
-    , className =? "Google-chrome"  --> doShift "2:web"
-    , className =? "jetbrains-studio"  --> doShift "3:code"
+    , className =? "electronic-wechat"     --> doFloat
+    , className =? "Google-chrome"  --> doShift "web"
+    , className =? "jetbrains-studio"  --> doShift "code"
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)
     , resource  =? "desktop_window" --> doIgnore
+    , resource =? "stalonetray" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore ]
 
 ------------------------------------------------------------------------
