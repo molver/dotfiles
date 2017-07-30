@@ -1,4 +1,4 @@
-Config { font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
+Config { font = "xft:sans:bold:size=11"
        , additionalFonts = []
        , borderColor = "black"
        , border = TopB
@@ -41,5 +41,5 @@ Config { font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
              ]
 , sepChar = "%"
 , alignSep = "}{"
-, template = "%StdinReader% | %cpu% | %memory% * %swap% | %wlp3s0%  }{ %ZSHC% | <fc=#ee9a00>%date%</fc> | %battery% | %volume% | %uname% "
+, template = "%StdinReader% }{ %cpu% | %memory% * %swap% | %wlp3s0% | %ZSHC% | <fc=#ee9a00>%date%</fc> | %battery% | %volume% | %uname% "
 }
