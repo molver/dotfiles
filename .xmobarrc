@@ -1,4 +1,4 @@
-Config { font = "xft:sans:bold:size=11"
+Config { font = "xft:sans:bold:size=9"
        , additionalFonts = []
        , borderColor = "black"
        , border = TopB
@@ -16,8 +16,13 @@ Config { font = "xft:sans:bold:size=11"
        , allDesktops = True
        , overrideRedirect = True
        , commands = [ Run Weather "ZSHC" ["-t","<station>: <tempC>°C ","-L","18","-H","25","--normal","green","--high","red","--low","lightblue"] 36000
-             , Run Network "wlp3s0" ["-L","0","-H","32","--normal","green","--high","red"] 10
-             , Run Network "enp12s0" ["-L","0","-H","32","--normal","green","--high","red"] 10
+             , Run DynNetwork [ "--template" , "<dev>: <tx>k/s-<rx>k/s"
+	     , "--Low"      , "10000"       -- units: B/s
+	     , "--High"     , "100000"       -- units: B/s
+	     , "--low"      , "darkgreen"
+	     , "--normal"   , "darkorange"
+	     , "--high"     , "darkred"
+	     ] 10
              , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
              , Run Com "sh" ["/home/zqk/.xmonad/volume.sh"] "volume" 10 
              , Run Battery [ "--template" , "Batt: <acstatus>"
@@ -41,5 +46,5 @@ Config { font = "xft:sans:bold:size=11"
              ]
 , sepChar = "%"
 , alignSep = "}{"
-, template = "%StdinReader% }{ %cpu% | %memory% * %swap% | %wlp3s0% | %ZSHC% | <fc=#ee9a00>%date%</fc> | %battery% | %volume% | %uname% "
+, template = "%StdinReader% }{ %cpu% | %memory% * %swap% | %dynnetwork% | %ZSHC% | <fc=#ee9a00>%date%</fc> | %battery% | %volume% | %uname% "
 }
