@@ -12,6 +12,27 @@ import Data.Monoid
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ICCCMFocus
+import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.SetWMName
+
+-- layouts
+import XMonad.Layout.NoBorders
+import XMonad.Layout.ResizableTile
+import XMonad.Layout.Reflect
+import XMonad.Layout.IM
+import XMonad.Layout.Tabbed
+import XMonad.Layout.PerWorkspace (onWorkspace)
+import XMonad.Layout.Grid
+import XMonad.Layout.ComboP
+import XMonad.Layout.Column
+import XMonad.Layout.Named
+import XMonad.Layout.TwoPane
+import XMonad.Layout.Renamed
+
+import XMonad.Util.NamedScratchpad
+import XMonad.Util.NamedWindows
+
+import Graphics.X11.ExtraTypes.XF86
 import System.Exit
 
 import qualified XMonad.StackSet as W
@@ -133,9 +154,14 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
-    , ((0, 0x1008FF12), spawn "amixer -q set Master toggle")
-    , ((0, 0x1008FF11), spawn "amixer -q set Master 10%-")
-    , ((0, 0x1008FF13), spawn "amixer -q set Master 10%+")
+    -- Mute volume.
+    , ((0, xF86XK_AudioMute), spawn "amixer -q set Master toggle")
+
+    -- Decrease volume.
+    , ((0, xF86XK_AudioLowerVolume), spawn "amixer -q set Master 5%-")
+
+    -- Increase volume.
+    , ((0, xF86XK_AudioRaiseVolume), spawn "amixer -q set Master 5%+")
     ]
     ++
 
@@ -187,7 +213,24 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts $ layoutHook defaultConfig
+myLayout = avoidStruts  $ (tiled ||| mtile ||| full ||| tab  ||| grid) 
+  where
+	--Layouts
+	tiled     = named "tile" $ smartBorders (ResizableTall 1 (2/100) (1/2) [])
+	mtile     = named "mtile" $ Mirror tiled
+        tab       = named "tab" $ noBorders $ tabbed shrinkText tabConfig
+	full 	  = named "full" $ noBorders Full
+	grid      = named "grid" $ smartBorders(Grid)
+
+-- Colors for text and backgrounds of each tab when in "Tabbed" layout.
+tabConfig = defaultTheme {
+    activeBorderColor = "#7C7C7C",
+    activeTextColor = "#CEFFAC",
+    activeColor = "#000000",
+    inactiveBorderColor = "#7C7C7C",
+    inactiveTextColor = "#EEEEEE",
+    inactiveColor = "#000000"
+}
 ------------------------------------------------------------------------
 -- Window rules:
 
@@ -206,6 +249,10 @@ myLayout = avoidStruts $ layoutHook defaultConfig
 myManageHook :: [ManageHook]
 myManageHook = [ className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
+    , className =? "Viewnior"       --> doFloat
+    , className =? "Google-chrome"  --> doShift "2:web"
+    , className =? "jetbrains-studio"  --> doShift "3:code"
+    , isFullscreen --> (doF W.focusDown <+> doFullFloat)
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore ]
 
@@ -238,7 +285,7 @@ myLogHook = do
 -- per-workspace layout choices.
 --
 -- By default, do nothing.
-myStartupHook = return()
+myStartupHook = setWMName "LG3D"
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
