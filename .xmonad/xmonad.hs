@@ -247,13 +247,13 @@ tabConfig = defaultTheme {
 -- 'className' and 'resource' are used below.
 --
 myManageHook :: [ManageHook]
-myManageHook = [ className =? "MPlayer"        --> doFloat
+myManageHook = [isFullscreen --> (doF W.focusDown <+> doFullFloat)
+    , className =? "MPlayer"        --> doFloat
     , className =? "Gimp"           --> doFloat
     , className =? "Viewnior"       --> doFloat
     , className =? "electronic-wechat"     --> doFloat
     , className =? "Google-chrome"  --> doShift "web"
     , className =? "jetbrains-studio"  --> doShift "code"
-    , isFullscreen --> (doF W.focusDown <+> doFullFloat)
     , resource  =? "desktop_window" --> doIgnore
     , resource =? "stalonetray" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore ]
@@ -287,7 +287,9 @@ myLogHook = do
 -- per-workspace layout choices.
 --
 -- By default, do nothing.
-myStartupHook = setWMName "LG3D"
+myStartupHook = do
+    setWMName "LG3D"
+    
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.

@@ -1,4 +1,6 @@
-xrandr --output HDMI1 --off --output LVDS1 --mode 1366x768 --pos 176x1080 --rotate normal --output VIRTUAL1 --off --output DP1 --off --output VGA1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
-fcitx &
+/home/zqk/.screenlayout/one-screen.sh
+xfce4-power-manager &
 nm-applet &
+pa-applet &
+fcitx &
 stalonetray &
