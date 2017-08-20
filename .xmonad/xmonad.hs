@@ -14,6 +14,8 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ICCCMFocus
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.SetWMName
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.UrgencyHook
 
 -- layouts
 import XMonad.Layout.NoBorders
@@ -125,6 +127,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Swap the focused window with the previous window
     , ((modm .|. shiftMask, xK_k     ), windows W.swapUp    )
 
+    -- lock screen
+    , ((modm .|. shiftMask, xK_z ), spawn "light-locker-command -l" )
+
     -- Shrink the master area
     , ((modm,               xK_h     ), sendMessage Shrink)
 
@@ -223,13 +228,14 @@ myLayout = avoidStruts  $ (tiled ||| mtile ||| full ||| tab  ||| grid)
 	grid      = named "grid" $ smartBorders(Grid)
 
 -- Colors for text and backgrounds of each tab when in "Tabbed" layout.
-tabConfig = defaultTheme {
+tabConfig = def {
     activeBorderColor = "#7C7C7C",
     activeTextColor = "#CEFFAC",
     activeColor = "#000000",
     inactiveBorderColor = "#7C7C7C",
     inactiveTextColor = "#EEEEEE",
-    inactiveColor = "#000000"
+    inactiveColor = "#000000",
+    fontName = "xft:sans:bold:size=8"
 }
 ------------------------------------------------------------------------
 -- Window rules:
@@ -246,17 +252,29 @@ tabConfig = defaultTheme {
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
 --
-myManageHook :: [ManageHook]
-myManageHook = [isFullscreen --> (doF W.focusDown <+> doFullFloat)
-    , className =? "MPlayer"        --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , className =? "Viewnior"       --> doFloat
-    , className =? "electronic-wechat"     --> doFloat
-    , className =? "Google-chrome"  --> doShift "web"
-    , className =? "jetbrains-studio"  --> doShift "code"
-    , resource  =? "desktop_window" --> doIgnore
-    , resource =? "stalonetray" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore ]
+myManageHook :: ManageHook
+myManageHook =
+  composeAll $
+  [isDialog --> doFloat] ++
+  [appName =? r --> doIgnore | r <- myIgnores] ++
+  -- auto-float certain windows
+  [className =? c --> doCenterFloat | c <- myCenFloats] ++
+  [className =? t --> doFloat | t <- myFloat] ++
+  -- send certain windows to certain workspaces
+  [className =? r --> doShift wsp | (r,wsp) <- myWorkspaceMove] ++
+  -- fulscreen windows to fullfloating
+  [isFullscreen --> doFullFloat]
+  where
+        -- windows to operate
+        myIgnores =
+          ["desktop","kdesktop","desktop_window","stalonetray"]
+        myCenFloats =
+          ["Steam","steam","vlc","Vlc","mpv", "wine", "electronic-wechat", "smplayer"]
+        myFloat = ["Hangouts"]
+        myWorkspaceMove =
+          [("Google-chrome","web")
+          ,("jetbrains-studio","code")
+          ,("jetbrains-webstorm","code")]
 
 ------------------------------------------------------------------------
 -- Event handling
@@ -267,8 +285,7 @@ myManageHook = [isFullscreen --> (doF W.focusDown <+> doFullFloat)
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
-myEventHook = mempty
-
+myEventHook = ewmhDesktopsEventHook <+>fullscreenEventHook
 ------------------------------------------------------------------------
 -- Status bars and logging
 
@@ -322,7 +339,7 @@ defaults = def {
       -- hooks, layouts
         layoutHook         = myLayout,
         manageHook         = manageHook defaultConfig
-	      <+> composeAll myManageHook
+	      <+> myManageHook
 	      <+> manageDocks,
         handleEventHook    = myEventHook,
         logHook            = myLogHook,
