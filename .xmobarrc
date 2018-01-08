@@ -15,17 +15,15 @@ Config { font = "xft:sans:bold:size=9"
        , iconRoot = "."
        , allDesktops = True
        , overrideRedirect = True
-       , commands = [ Run Weather "ZSHC" ["-t","<station>: <tempC>°C ","-L","18","-H","25","--normal","green","--high","red","--low","lightblue"] 36000
-             , Run DynNetwork [ "--template" , "<dev>: <tx>k/s-<rx>k/s"
+       , commands = [ Run DynNetwork [ "--template" , "<tx>k/s-<rx>k/s"
 	     , "--Low"      , "10000"       -- units: B/s
 	     , "--High"     , "100000"       -- units: B/s
 	     , "--low"      , "darkgreen"
 	     , "--normal"   , "darkorange"
 	     , "--high"     , "darkred"
 	     ] 10
-             , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
-             , Run Com "sh" ["/home/zqk/.xmonad/volume.sh"] "volume" 10 
-             , Run Battery [ "--template" , "Batt: <acstatus>"
+             , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 20
+             , Run Battery [ "--template" , "电池: <acstatus>"
                , "--Low"      , "10"        -- units: %
                , "--High"     , "80"        -- units: %
                , "--low"      , "darkred"
@@ -35,16 +33,16 @@ Config { font = "xft:sans:bold:size=9"
                       -- discharging status
                , "-o"	, "<left>% (<timeleft>)"
                       -- AC "on" status
-               , "-O"	, "<fc=#dAA520>Charging</fc>"
+               , "-O"	, "<fc=#dAA520>充电中</fc>"
                       -- charged status
-               , "-i"	, "<fc=#006000>Charged</fc>"
-             ] 50
-             , Run Memory ["-t","Mem: <usedratio>%"] 10
-             , Run Swap [ ] 10
-             , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+               , "-i"	, "<fc=#006000>已充满</fc>"
+             ] 300
+             , Run Memory ["-t","内存: <usedratio>%"] 50
+             , Run Swap [ ] 50
+             , Run Com "date" ["+%Y-%m-%d 周%a %H:%M:%S"] "mydate" 10
              , Run StdinReader
              ]
-, sepChar = "%"
+, sepChar = "&"
 , alignSep = "}{"
-, template = "%StdinReader% }{ %cpu% | %memory% * %swap% | %dynnetwork% | %ZSHC% | <fc=#ee9a00>%date%</fc> | %battery% | %volume% | %uname% "
+, template = "&StdinReader& }{ &cpu& | &memory& * &swap& | &dynnetwork& | <fc=#ee9a00>&mydate&</fc> | &battery&"
 }
