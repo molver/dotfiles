@@ -73,7 +73,7 @@ myModMask       = mod4Mask
 --
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
-myWorkspaces    = ["term","web","code","media","5","6","7","8","9"]
+myWorkspaces    = ["term","web","code","file","other","6","7","8","9"]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
@@ -218,14 +218,14 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts  $ (tiled ||| mtile ||| full ||| tab  ||| grid) 
+myLayout = avoidStruts  $ (tiled ||| tab ||| full ) 
   where
 	--Layouts
 	tiled     = named "tile" $ smartBorders (ResizableTall 1 (2/100) (1/2) [])
-	mtile     = named "mtile" $ Mirror tiled
+	--mtile     = named "mtile" $ Mirror tiled
         tab       = named "tab" $ noBorders $ tabbed shrinkText tabConfig
 	full 	  = named "full" $ noBorders Full
-	grid      = named "grid" $ smartBorders(Grid)
+	--grid      = named "grid" $ smartBorders(Grid)
 
 -- Colors for text and backgrounds of each tab when in "Tabbed" layout.
 tabConfig = def {

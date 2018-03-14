@@ -1,8 +1,8 @@
 [alias]
 	st = status .
 	ci = commit -m
+	cd = checkout dev
+	cm = checkout master
 [user]
 	email = zhengqk@yidianling.com
 	name = zhengqk
-[core]
-	editor = vim
