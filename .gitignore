@@ -36,8 +36,6 @@
 .xfce4-session.verbose-log
 .xfce4-session.verbose-log.last
 .xinitrc
-.xprofile
-.xsession
 .xsession-errors
 .xsession-errors.old
 .zcompdump-zqk-pc-5.3.1
